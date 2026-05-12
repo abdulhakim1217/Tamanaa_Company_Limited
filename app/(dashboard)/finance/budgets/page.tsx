@@ -69,9 +69,9 @@ const budgets = [
 ]
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-GH", {
     style: "currency",
-    currency: "USD",
+    currency: "GHS",
     minimumFractionDigits: 0,
   }).format(amount)
 }

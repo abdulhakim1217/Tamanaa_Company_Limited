@@ -31,7 +31,7 @@ const customers = [
     city: "Karachi",
     region: "Sindh",
     customer_type: "wholesale",
-    credit_limit: 5000000, // PKR
+    credit_limit: 5000000, // GHS
     outstanding_balance: 850000,
     last_order_date: "2024-04-22",
     total_orders: 156,
@@ -147,9 +147,9 @@ function getStatusBadge(status: string) {
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-PK", {
+  return new Intl.NumberFormat("en-GH", {
     style: "currency",
-    currency: "PKR",
+    currency: "GHS",
     minimumFractionDigits: 0,
   }).format(amount)
 }

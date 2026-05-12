@@ -59,9 +59,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/auth/mock-auth"
 import { useRouter } from "next/navigation"
-import type { User } from "@supabase/supabase-js"
+import type { MockUser } from "@/lib/auth/mock-auth"
 
 const navigation = [
   {
@@ -88,9 +88,13 @@ const modules = [
     icon: Package,
     items: [
       { title: "Rice Products", url: "/inventory/products", icon: Boxes },
-      { title: "Raw Rice Stock", url: "/inventory/raw-materials", icon: Wheat },
+      { title: "Categories", url: "/inventory/categories", icon: Tags },
+      { title: "Raw Rice Stock", url: "/inventory/raw-rice", icon: Wheat },
+      { title: "Raw Materials", url: "/inventory/raw-materials", icon: Wheat },
       { title: "Finished Goods", url: "/inventory/finished-goods", icon: Package },
       { title: "Packaging Materials", url: "/inventory/packaging", icon: Tags },
+      { title: "Stock Levels", url: "/inventory/stock", icon: BarChart3 },
+      { title: "Suppliers", url: "/inventory/suppliers", icon: Truck },
       { title: "Stock Movements", url: "/inventory/movements", icon: TrendingUp },
     ],
   },
@@ -105,12 +109,23 @@ const modules = [
     ],
   },
   {
+    title: "CRM",
+    icon: Target,
+    items: [
+      { title: "Customers", url: "/crm/customers", icon: Users },
+      { title: "Leads", url: "/crm/leads", icon: UserPlus },
+      { title: "Opportunities", url: "/crm/opportunities", icon: Target },
+      { title: "CRM Analytics", url: "/crm/analytics", icon: BarChart3 },
+    ],
+  },
+  {
     title: "Finance",
     icon: Wallet,
     items: [
       { title: "Accounts", url: "/finance/accounts", icon: Wallet },
       { title: "Transactions", url: "/finance/transactions", icon: FileText },
       { title: "Invoices", url: "/finance/invoices", icon: FileText },
+      { title: "Budgets", url: "/finance/budgets", icon: PieChart },
       { title: "Cost Analysis", url: "/finance/costs", icon: PieChart },
       { title: "Financial Reports", url: "/finance/reports", icon: BarChart3 },
     ],
@@ -134,16 +149,15 @@ const secondaryNav = [
 ]
 
 interface AppSidebarProps {
-  user: User | null
+  user: MockUser | null
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    // In standalone mode, just redirect to login
     router.push("/auth/login")
     router.refresh()
   }

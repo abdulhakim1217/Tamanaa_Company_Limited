@@ -1,115 +1,62 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Plus, Search, Download, ArrowUpRight, ArrowDownRight, Calendar } from "lucide-react"
-import Link from "next/link"
+import { Plus, ArrowUpRight, ArrowDownRight, FileText } from "lucide-react"
 
 const transactions = [
   {
-    id: "1",
-    reference: "TXN-2024-0089",
-    description: "Client payment - Acme Corp",
-    account: "Accounts Receivable",
+    id: 1,
     type: "credit",
-    amount: 15000,
-    date: "2024-04-24",
-    created_by: "Sarah Johnson",
+    description: "Payment from Metro Cash & Carry",
+    amount: 2500000,
+    account: "Bank Account",
+    reference: "INV-2024-156",
+    date: "2024-04-24T10:30:00Z",
+    status: "completed",
   },
   {
-    id: "2",
-    reference: "TXN-2024-0088",
-    description: "Monthly rent payment",
-    account: "Rent Expense",
+    id: 2,
     type: "debit",
-    amount: 3000,
-    date: "2024-04-24",
-    created_by: "Mike Chen",
+    description: "Raw material purchase - Punjab Rice Farms",
+    amount: 850000,
+    account: "Bank Account",
+    reference: "PO-2024-045",
+    date: "2024-04-23T14:15:00Z",
+    status: "completed",
   },
   {
-    id: "3",
-    reference: "TXN-2024-0087",
-    description: "Office supplies purchase",
-    account: "Operating Cash",
+    id: 3,
     type: "debit",
-    amount: 450,
-    date: "2024-04-23",
-    created_by: "Emily Davis",
+    description: "Employee salaries - April 2024",
+    amount: 1200000,
+    account: "Payroll Account",
+    reference: "PAY-2024-04",
+    date: "2024-04-22T09:00:00Z",
+    status: "completed",
   },
   {
-    id: "4",
-    reference: "TXN-2024-0086",
-    description: "Software subscription",
-    account: "Operating Cash",
-    type: "debit",
-    amount: 1200,
-    date: "2024-04-23",
-    created_by: "John Doe",
-  },
-  {
-    id: "5",
-    reference: "TXN-2024-0085",
-    description: "Client payment - Tech Solutions",
-    account: "Accounts Receivable",
+    id: 4,
     type: "credit",
-    amount: 8500,
-    date: "2024-04-22",
-    created_by: "Sarah Johnson",
-  },
-  {
-    id: "6",
-    reference: "TXN-2024-0084",
-    description: "Payroll processing",
-    account: "Salaries Expense",
-    type: "debit",
-    amount: 284560,
-    date: "2024-04-20",
-    created_by: "HR System",
-  },
-  {
-    id: "7",
-    reference: "TXN-2024-0083",
-    description: "Vendor payment - Supplier Inc",
-    account: "Accounts Payable",
-    type: "debit",
-    amount: 12500,
-    date: "2024-04-19",
-    created_by: "Mike Chen",
+    description: "Payment from Carrefour Pakistan",
+    amount: 1800000,
+    account: "Bank Account",
+    reference: "INV-2024-157",
+    date: "2024-04-21T16:45:00Z",
+    status: "completed",
   },
 ]
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-GH", {
     style: "currency",
-    currency: "USD",
+    currency: "GHS",
     minimumFractionDigits: 0,
   }).format(amount)
 }
 
 export default function TransactionsPage() {
-  const totalCredits = transactions
-    .filter((t) => t.type === "credit")
-    .reduce((sum, t) => sum + t.amount, 0)
-  const totalDebits = transactions
-    .filter((t) => t.type === "debit")
-    .reduce((sum, t) => sum + t.amount, 0)
+  const totalCredit = transactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
+  const totalDebit = transactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
 
   return (
     <div className="space-y-6">
@@ -120,33 +67,22 @@ export default function TransactionsPage() {
             View and manage financial transactions
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button asChild>
-            <Link href="/finance/transactions/new">
-              <Plus className="w-4 h-4 mr-2" />
-              New Transaction
-            </Link>
-          </Button>
-        </div>
+        <Button>
+          <Plus className="w-4 h-4 mr-2" />
+          New Transaction
+        </Button>
       </div>
 
-      {/* Summary */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Credits</p>
-                <p className="text-2xl font-bold text-success">
-                  +{formatCurrency(totalCredits)}
-                </p>
+                <p className="text-sm text-muted-foreground">Total Credit</p>
+                <p className="text-2xl font-bold text-success">{formatCurrency(totalCredit)}</p>
               </div>
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-success/10">
-                <ArrowUpRight className="w-5 h-5 text-success" />
+                <ArrowDownRight className="w-5 h-5 text-success" />
               </div>
             </div>
           </CardContent>
@@ -155,13 +91,11 @@ export default function TransactionsPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Debits</p>
-                <p className="text-2xl font-bold text-destructive">
-                  -{formatCurrency(totalDebits)}
-                </p>
+                <p className="text-sm text-muted-foreground">Total Debit</p>
+                <p className="text-2xl font-bold text-destructive">{formatCurrency(totalDebit)}</p>
               </div>
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-destructive/10">
-                <ArrowDownRight className="w-5 h-5 text-destructive" />
+                <ArrowUpRight className="w-5 h-5 text-destructive" />
               </div>
             </div>
           </CardContent>
@@ -170,112 +104,56 @@ export default function TransactionsPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Net Flow</p>
-                <p className={`text-2xl font-bold ${totalCredits - totalDebits >= 0 ? "text-success" : "text-destructive"}`}>
-                  {totalCredits - totalDebits >= 0 ? "+" : ""}{formatCurrency(totalCredits - totalDebits)}
-                </p>
+                <p className="text-sm text-muted-foreground">Net Balance</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalCredit - totalDebit)}</p>
               </div>
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                <Calendar className="w-5 h-5 text-primary" />
+                <FileText className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Transactions Table */}
       <Card>
         <CardHeader>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>All financial transactions</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search transactions..."
-                  className="pl-8"
-                />
-              </div>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="credit">Credits</SelectItem>
-                  <SelectItem value="debit">Debits</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <CardTitle>Recent Transactions</CardTitle>
+          <CardDescription>Latest financial transactions</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Reference</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Account</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell className="font-mono text-sm">
-                    {transaction.reference}
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{transaction.description}</p>
-                      <p className="text-xs text-muted-foreground">
-                        by {transaction.created_by}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{transaction.account}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        transaction.type === "credit"
-                          ? "bg-success/10 text-success border-success/20"
-                          : "bg-destructive/10 text-destructive border-destructive/20"
-                      }
-                    >
-                      {transaction.type === "credit" ? (
-                        <ArrowUpRight className="w-3 h-3 mr-1" />
-                      ) : (
-                        <ArrowDownRight className="w-3 h-3 mr-1" />
-                      )}
-                      {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell
-                    className={`text-right font-semibold ${
-                      transaction.type === "credit" ? "text-success" : "text-destructive"
-                    }`}
-                  >
-                    {transaction.type === "credit" ? "+" : "-"}
-                    {formatCurrency(transaction.amount)}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(transaction.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="space-y-4">
+            {transactions.map((transaction) => (
+              <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center gap-4">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${
+                    transaction.type === 'credit' ? 'bg-success/10' : 'bg-destructive/10'
+                  }`}>
+                    {transaction.type === 'credit' ? (
+                      <ArrowDownRight className="w-5 h-5 text-success" />
+                    ) : (
+                      <ArrowUpRight className="w-5 h-5 text-destructive" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium">{transaction.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {transaction.account} • {transaction.reference}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-lg font-semibold ${
+                    transaction.type === 'credit' ? 'text-success' : 'text-destructive'
+                  }`}>
+                    {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(transaction.date).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

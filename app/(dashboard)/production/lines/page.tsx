@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreHorizontal, Factory, Zap, AlertTriangle, CheckCircle2, Clock, Pause, Play, Settings } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Factory, Zap, AlertTriangle, CheckCircle2, Clock, Pause, Play, Settings, Activity, TrendingUp, BarChart3 } from "lucide-react"
 import Link from "next/link"
 
 // Mock production line data for rice processing

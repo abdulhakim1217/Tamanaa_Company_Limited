@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server"
 import { getDashboardStats, getTasks } from "@/lib/database"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -156,33 +155,16 @@ function getModuleColor(module: string) {
 }
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const firstName = "User"
 
-  if (!user) {
-    return null
+  // Use mock data in standalone mode
+  const dashboardStats = {
+    employees: { total: 85, active: 82 },
+    revenue: { total: 2450000 },
+    products: { total: 12, low_stock: 2 },
+    leads: { total: 28 }
   }
-
-  const firstName = user?.user_metadata?.first_name || "User"
-
-  // Fetch real dashboard data
-  let dashboardStats, userTasks
-  try {
-    [dashboardStats, userTasks] = await Promise.all([
-      getDashboardStats(),
-      getTasks(user.id)
-    ])
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error)
-    // Fallback to rice processing specific mock data
-    dashboardStats = {
-      employees: { total: 85, active: 82 },
-      revenue: { total: 2450000 }, // Monthly revenue in PKR
-      products: { total: 12, low_stock: 2 }, // Rice product varieties
-      leads: { total: 28 } // New customer inquiries
-    }
-    userTasks = recentTasks
-  }
+  const userTasks = recentTasks
 
   const stats = [
     {
@@ -211,7 +193,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Monthly Sales",
-      value: `₹${(dashboardStats.revenue.total / 100000).toFixed(1)}L`,
+      value: `GH₵ ${(dashboardStats.revenue.total / 100000).toFixed(1)}L`,
       change: "+18%",
       trend: "up" as const,
       icon: TrendingUp,
@@ -233,7 +215,7 @@ export default async function DashboardPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href="/production/quality/new">
+            <Link href="/production/quality">
               <Plus className="w-4 h-4 mr-2" />
               Quality Check
             </Link>
@@ -302,7 +284,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {(userTasks.slice(0, 4) || recentTasks).map((task: any) => (
+              {userTasks.slice(0, 4).map((task: any) => (
                 <div
                   key={task.id}
                   className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
@@ -319,7 +301,7 @@ export default async function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{task.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      Assigned to {task.assigned_to_name || task.assignee}
+                      Assigned to {task.assignee}
                     </p>
                   </div>
                   <Badge
@@ -329,7 +311,7 @@ export default async function DashboardPage() {
                     {task.priority}
                   </Badge>
                   <span className="text-sm text-muted-foreground whitespace-nowrap">
-                    {task.due_date ? new Date(task.due_date).toLocaleDateString() : task.dueDate}
+                    {task.dueDate}
                   </span>
                 </div>
               ))}

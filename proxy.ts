@@ -1,8 +1,11 @@
-import { updateSession } from '@/lib/supabase/middleware'
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+// Simple proxy function for standalone mode (no authentication required)
+export async function proxy(request: NextRequest) {
+  // In standalone mode, just pass through all requests
+  return NextResponse.next({
+    request,
+  })
 }
 
 export const config = {

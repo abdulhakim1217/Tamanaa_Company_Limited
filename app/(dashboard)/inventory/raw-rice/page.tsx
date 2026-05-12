@@ -108,7 +108,7 @@ function getQualityColor(score: number) {
 }
 
 function formatCurrency(amount: string) {
-  return `₹${amount}`
+  return `GH₵${amount}`
 }
 
 export default function RawRiceStockPage() {
@@ -138,7 +138,7 @@ export default function RawRiceStockPage() {
     },
     { 
       title: "Stock Value", 
-      value: `₹${(totalValue / 100000).toFixed(1)}L`, 
+      value: `GH₵${(totalValue / 100000).toFixed(1)}L`, 
       icon: TrendingUp, 
       color: "bg-chart-2" 
     },

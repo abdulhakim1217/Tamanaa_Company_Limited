@@ -101,9 +101,9 @@ function getQualityBadge(grade: string) {
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-PK", {
+  return new Intl.NumberFormat("en-GH", {
     style: "currency",
-    currency: "PKR",
+    currency: "GHS",
     minimumFractionDigits: 0,
   }).format(amount)
 }

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,7 +27,6 @@ export default function NewEmployeePage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,44 +34,13 @@ export default function NewEmployeePage() {
     setIsLoading(true)
 
     try {
-      // Create user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: formData.email,
-        password: formData.password,
-        email_confirm: true,
-        user_metadata: {
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-        },
-      })
-
-      if (authError) {
-        throw authError
-      }
-
-      // Create user record in database
-      const response = await fetch("/api/employees", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: authData.user.id,
-          email: formData.email,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          phone: formData.phone,
-          job_title: formData.jobTitle,
-          department_id: formData.departmentId || null,
-          role_id: formData.roleId || null,
-          hire_date: formData.hireDate,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to create employee record")
-      }
-
+      // In standalone mode, just simulate the creation
+      // In a real implementation, this would call an API endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Show success message
+      alert("Employee created successfully! (Mock mode - no database)")
+      
       router.push("/hr/employees")
     } catch (err: any) {
       setError(err.message)

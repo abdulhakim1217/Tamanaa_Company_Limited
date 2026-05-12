@@ -1,5 +1,4 @@
 import { getLeaveRequests } from "@/lib/database"
-import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -52,9 +51,6 @@ function getLeaveTypeBadge(type: string) {
 }
 
 export default async function LeaveRequestsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
   // Fetch real data from database
   let leaveRequests
   try {

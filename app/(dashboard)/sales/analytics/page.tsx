@@ -4,7 +4,7 @@ import { BarChart3, TrendingUp, Users, Package } from "lucide-react"
 const salesMetrics = [
   {
     title: "Monthly Sales",
-    value: "₹24.5M",
+    value: "GH₵24.5M",
     change: "+18%",
     icon: TrendingUp,
     color: "bg-success",
@@ -25,7 +25,7 @@ const salesMetrics = [
   },
   {
     title: "Average Order Value",
-    value: "₹275K",
+    value: "GH₵275K",
     change: "+8%",
     icon: BarChart3,
     color: "bg-chart-3",
