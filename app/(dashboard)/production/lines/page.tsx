@@ -2,14 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,12 +71,12 @@ const productionLines = [
 function getStatusBadge(status: string) {
   switch (status) {
     case "running":
-      return <Badge className="bg-success/10 text-success border-success/20">
+      return <Badge className="bg-green-100 text-green-800 border-green-200">
         <CheckCircle2 className="w-3 h-3 mr-1" />
         Running
       </Badge>
     case "idle":
-      return <Badge className="bg-warning/10 text-warning-foreground border-warning/20">
+      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
         <Pause className="w-3 h-3 mr-1" />
         Idle
       </Badge>
@@ -102,78 +95,270 @@ function getStatusBadge(status: string) {
   }
 }
 
-function getEfficiencyColor(efficiency: number) {
-  if (efficiency >= 90) return "text-success"
-  if (efficiency >= 75) return "text-warning"
-  return "text-destructive"
-}
-
 export default function ProductionLinesPage() {
-  const stats = [
-    { 
-      title: "Active Lines", 
-      value: productionLines.filter(line => line.status === 'running').length, 
-      icon: Factory, 
-      color: "bg-success" 
+  const columns = [
+    {
+      key: 'name' as keyof typeof productionLines[0],
+      header: 'Production Line',
+      mobileLabel: 'Line'
     },
-    { 
-      title: "Total Capacity", 
-      value: `${productionLines.reduce((sum, line) => sum + parseInt(line.capacity), 0).toLocaleString()} kg/h`, 
-      icon: Zap, 
-      color: "bg-primary" 
+    {
+      key: 'status' as keyof typeof productionLines[0],
+      header: 'Status',
+      mobileLabel: 'Status'
     },
-    { 
-      title: "Current Output", 
-      value: `${productionLines.reduce((sum, line) => sum + parseInt(line.current_output), 0).toLocaleString()} kg/h`, 
-      icon: CheckCircle2, 
-      color: "bg-chart-2" 
+    {
+      key: 'capacity' as keyof typeof productionLines[0],
+      header: 'Capacity',
+      mobileLabel: 'Capacity',
+      mobileHidden: false
     },
-    { 
-      title: "Avg Efficiency", 
-      value: `${(productionLines.filter(l => l.status === 'running').reduce((sum, line) => sum + line.efficiency, 0) / productionLines.filter(l => l.status === 'running').length || 0).toFixed(1)}%`, 
-      icon: BarChart3, 
-      color: "bg-chart-3" 
+    {
+      key: 'current_output' as keyof typeof productionLines[0],
+      header: 'Current Output',
+      mobileLabel: 'Output',
+      mobileHidden: false
     },
+    {
+      key: 'efficiency' as keyof typeof productionLines[0],
+      header: 'Efficiency',
+      mobileLabel: 'Efficiency'
+    },
+    {
+      key: 'operator' as keyof typeof productionLines[0],
+      header: 'Operator',
+      mobileLabel: 'Operator',
+      mobileHidden: true // Hide on mobile to save space
+    },
+    {
+      key: 'next_maintenance' as keyof typeof productionLines[0],
+      header: 'Next Maintenance',
+      mobileLabel: 'Maintenance',
+      mobileHidden: true // Hide on mobile to save space
+    },
+    {
+      key: 'actions' as keyof typeof productionLines[0],
+      header: 'Actions',
+      mobileLabel: 'Actions'
+    }
   ]
+
+  const renderCell = (column: any, value: any, item: any) => {
+    switch (column.key) {
+      case 'name':
+        return (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+              <Factory className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <div className="font-medium">{value}</div>
+              <div className="text-sm text-muted-foreground">{item.type}</div>
+            </div>
+          </div>
+        )
+      case 'status':
+        return getStatusBadge(value)
+      case 'efficiency':
+        return (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              {value > 90 ? (
+                <TrendingUp className="w-4 h-4 text-green-600" />
+              ) : value > 70 ? (
+                <BarChart3 className="w-4 h-4 text-yellow-600" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+              )}
+              <span className={value > 90 ? "text-green-600" : value > 70 ? "text-yellow-600" : "text-red-600"}>
+                {value}%
+              </span>
+            </div>
+          </div>
+        )
+      case 'actions':
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                Configure
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Activity className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                {item.status === "running" ? (
+                  <>
+                    <Pause className="mr-2 h-4 w-4" />
+                    Stop Line
+                  </>
+                ) : (
+                  <>
+                    <Play className="mr-2 h-4 w-4" />
+                    Start Line
+                  </>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      default:
+        return String(value || '-')
+    }
+  }
+
+  const mobileCardRender = (item: any, index: number) => (
+    <Card key={index} className="p-4">
+      <CardContent className="p-0 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+              <Factory className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <div className="font-medium">{item.name}</div>
+              <div className="text-sm text-muted-foreground">{item.type}</div>
+            </div>
+          </div>
+          {getStatusBadge(item.status)}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="text-muted-foreground">Capacity:</span>
+            <div className="font-medium">{item.capacity}</div>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Output:</span>
+            <div className="font-medium">{item.current_output}</div>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {item.efficiency > 90 ? (
+              <TrendingUp className="w-4 h-4 text-green-600" />
+            ) : item.efficiency > 70 ? (
+              <BarChart3 className="w-4 h-4 text-yellow-600" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-red-600" />
+            )}
+            <span className={item.efficiency > 90 ? "text-green-600" : item.efficiency > 70 ? "text-yellow-600" : "text-red-600"}>
+              {item.efficiency}% Efficiency
+            </span>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                Configure
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Activity className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                {item.status === "running" ? (
+                  <>
+                    <Pause className="mr-2 h-4 w-4" />
+                    Stop Line
+                  </>
+                ) : (
+                  <>
+                    <Play className="mr-2 h-4 w-4" />
+                    Start Line
+                  </>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </CardContent>
+    </Card>
+  )
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Production Lines</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Production Lines</h1>
           <p className="text-muted-foreground">
             Monitor and manage rice processing production lines
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Clock className="w-4 h-4 mr-2" />
-            Shift Schedule
-          </Button>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
+        <Button asChild className="w-full md:w-auto">
+          <Link href="/production/lines/new">
+            <Plus className="mr-2 h-4 w-4" />
             Add Production Line
-          </Button>
-        </div>
+          </Link>
+        </Button>
       </div>
 
-      {/* Stats */}
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                </div>
-                <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${stat.color}/10`}>
-                  <stat.icon className={`w-5 h-5 ${stat.color.replace("bg-", "text-")}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Lines</CardTitle>
+            <Factory className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">2</div>
+            <p className="text-xs text-muted-foreground">
+              +1 from yesterday
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Output</CardTitle>
+            <Zap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">4,550 kg/h</div>
+            <p className="text-xs text-muted-foreground">
+              +12% from last hour
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Efficiency</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">91.3%</div>
+            <p className="text-xs text-muted-foreground">
+              +2.1% from yesterday
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Maintenance Due</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1</div>
+            <p className="text-xs text-muted-foreground">
+              Line C scheduled
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Production Lines Table */}
@@ -181,107 +366,29 @@ export default function ProductionLinesPage() {
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <CardTitle>Production Lines Status</CardTitle>
-              <CardDescription>Real-time monitoring of all rice processing lines</CardDescription>
+              <CardTitle>Production Lines</CardTitle>
+              <CardDescription>
+                Current status and performance of all production lines
+              </CardDescription>
             </div>
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search production lines..."
-                className="pl-8"
-              />
+            <div className="flex flex-col gap-2 md:flex-row md:items-center">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search lines..."
+                  className="pl-8 w-full md:w-64"
+                />
+              </div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Production Line</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Capacity</TableHead>
-                <TableHead>Current Output</TableHead>
-                <TableHead>Efficiency</TableHead>
-                <TableHead>Operator</TableHead>
-                <TableHead>Next Maintenance</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {productionLines.map((line) => (
-                <TableRow key={line.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white">
-                        <Factory className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{line.name}</p>
-                        <p className="text-sm text-muted-foreground">{line.type}</p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(line.status)}</TableCell>
-                  <TableCell>
-                    <div className="font-medium">{line.capacity}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{line.current_output}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={`font-semibold ${getEfficiencyColor(line.efficiency)}`}>
-                      {line.efficiency}%
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{line.operator}</p>
-                      <p className="text-sm text-muted-foreground">{line.shift}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {new Date(line.next_maintenance).toLocaleDateString()}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Play className="w-4 h-4 mr-2" />
-                          Start Line
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Pause className="w-4 h-4 mr-2" />
-                          Stop Line
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/production/lines/${line.id}`}>
-                            View Details
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Settings className="w-4 h-4 mr-2" />
-                          Maintenance
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/production/lines/${line.id}/edit`}>
-                            Edit Settings
-                          </Link>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ResponsiveTable
+            data={productionLines}
+            columns={columns}
+            renderCell={renderCell}
+            mobileCardRender={mobileCardRender}
+          />
         </CardContent>
       </Card>
     </div>

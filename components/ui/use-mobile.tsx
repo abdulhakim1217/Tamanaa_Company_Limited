@@ -17,3 +17,20 @@ export function useIsMobile() {
 
   return !!isMobile
 }
+
+// Hook for detecting very small screens (phones in portrait)
+export function useIsSmallMobile() {
+  const [isSmallMobile, setIsSmallMobile] = React.useState<boolean | undefined>(undefined)
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: 480px)`)
+    const onChange = () => {
+      setIsSmallMobile(window.innerWidth < 480)
+    }
+    mql.addEventListener('change', onChange)
+    setIsSmallMobile(window.innerWidth < 480)
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
+
+  return !!isSmallMobile
+}

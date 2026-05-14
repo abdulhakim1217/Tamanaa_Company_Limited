@@ -95,17 +95,27 @@ const messages = [
 
 export default function MessagesPage() {
   return (
-    <div className="h-[calc(100vh-4rem)] flex">
-      {/* Conversations List */}
-      <div className="w-80 border-r bg-card">
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Messages</h2>
-            <Button size="sm" variant="outline">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              New Chat
-            </Button>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Messages</h1>
+          <p className="text-muted-foreground">
+            Internal communication and notifications
+          </p>
+        </div>
+      </div>
+
+      <div className="h-[calc(100vh-8rem)] flex flex-col md:flex-row">
+        {/* Conversations List */}
+        <div className="w-full md:w-80 border-r bg-card">
+          <div className="p-4 border-b">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
+              <h2 className="text-lg font-semibold">Messages</h2>
+              <Button size="sm" variant="outline" className="w-full md:w-auto">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                New Chat
+              </Button>
+            </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input

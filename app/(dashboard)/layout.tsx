@@ -29,13 +29,13 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar user={user} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-2 md:px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <Breadcrumb>
             <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/dashboard" className="text-sm md:text-base">
                   Tamanaa Rice Processing
                 </BreadcrumbLink>
               </BreadcrumbItem>
