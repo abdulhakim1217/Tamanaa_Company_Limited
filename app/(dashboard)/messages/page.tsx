@@ -116,56 +116,56 @@ export default function MessagesPage() {
                 New Chat
               </Button>
             </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search conversations..."
-              className="pl-9"
-            />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search conversations..."
+                className="pl-9"
+              />
+            </div>
           </div>
-        </div>
-        
-        <div className="overflow-y-auto">
-          {conversations.map((conversation) => (
-            <div
-              key={conversation.id}
-              className={`p-4 border-b hover:bg-accent cursor-pointer transition-colors ${
-                conversation.id === 1 ? 'bg-accent' : ''
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <div className="relative">
-                  <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs">
-                      {conversation.avatar}
-                    </AvatarFallback>
-                  </Avatar>
-                  {conversation.online && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-background" />
+          
+          <div className="overflow-y-auto">
+            {conversations.map((conversation) => (
+              <div
+                key={conversation.id}
+                className={`p-4 border-b hover:bg-accent cursor-pointer transition-colors ${
+                  conversation.id === 1 ? 'bg-accent' : ''
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="relative">
+                    <Avatar className="w-10 h-10">
+                      <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs">
+                        {conversation.avatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    {conversation.online && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-background" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium truncate">{conversation.name}</h3>
+                      <span className="text-xs text-muted-foreground">{conversation.time}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground truncate mt-0.5">
+                      {conversation.lastMessage}
+                    </p>
+                  </div>
+                  {conversation.unread > 0 && (
+                    <Badge className="bg-primary text-primary-foreground text-xs min-w-[20px] h-5 flex items-center justify-center">
+                      {conversation.unread}
+                    </Badge>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium truncate">{conversation.name}</h3>
-                    <span className="text-xs text-muted-foreground">{conversation.time}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground truncate mt-0.5">
-                    {conversation.lastMessage}
-                  </p>
-                </div>
-                {conversation.unread > 0 && (
-                  <Badge className="bg-primary text-primary-foreground text-xs min-w-[20px] h-5 flex items-center justify-center">
-                    {conversation.unread}
-                  </Badge>
-                )}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col">
         {/* Chat Header */}
         <div className="p-4 border-b bg-card">
           <div className="flex items-center justify-between">
