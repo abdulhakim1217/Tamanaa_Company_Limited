@@ -166,90 +166,91 @@ export default function MessagesPage() {
 
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="p-4 border-b bg-card">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar className="w-10 h-10">
-                <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs">
-                  PT
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-medium">Production Team</h3>
-                <p className="text-sm text-muted-foreground">5 members • Online</p>
+          {/* Chat Header */}
+          <div className="p-4 border-b bg-card">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar className="w-10 h-10">
+                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs">
+                    PT
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="font-medium">Production Team</h3>
+                  <p className="text-sm text-muted-foreground">5 members • Online</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline">
-                <Phone className="w-4 h-4" />
-              </Button>
-              <Button size="sm" variant="outline">
-                <Video className="w-4 h-4" />
-              </Button>
-              <Button size="sm" variant="outline">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline">
+                  <Phone className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="outline">
+                  <Video className="w-4 h-4" />
+                </Button>
+                <Button size="sm" variant="outline">
+                  <MoreHorizontal className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-[70%] ${message.isOwn ? 'order-2' : 'order-1'}`}>
-                {!message.isOwn && (
-                  <p className="text-xs text-muted-foreground mb-1 px-3">
-                    {message.sender}
-                  </p>
-                )}
-                <div
-                  className={`rounded-lg px-3 py-2 ${
-                    message.isOwn
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  <p className="text-sm">{message.content}</p>
-                </div>
-                <div className={`flex items-center gap-1 mt-1 px-3 ${
-                  message.isOwn ? 'justify-end' : 'justify-start'
-                }`}>
-                  <span className="text-xs text-muted-foreground">{message.time}</span>
-                  {message.isOwn && (
-                    <CheckCheck className={`w-3 h-3 ${
-                      message.status === 'read' ? 'text-primary' : 'text-muted-foreground'
-                    }`} />
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-[70%] ${message.isOwn ? 'order-2' : 'order-1'}`}>
+                  {!message.isOwn && (
+                    <p className="text-xs text-muted-foreground mb-1 px-3">
+                      {message.sender}
+                    </p>
                   )}
+                  <div
+                    className={`rounded-lg px-3 py-2 ${
+                      message.isOwn
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                  </div>
+                  <div className={`flex items-center gap-1 mt-1 px-3 ${
+                    message.isOwn ? 'justify-end' : 'justify-start'
+                  }`}>
+                    <span className="text-xs text-muted-foreground">{message.time}</span>
+                    {message.isOwn && (
+                      <CheckCheck className={`w-3 h-3 ${
+                        message.status === 'read' ? 'text-primary' : 'text-muted-foreground'
+                      }`} />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Message Input */}
-        <div className="p-4 border-t bg-card">
-          <div className="flex items-end gap-2">
-            <Button size="sm" variant="outline">
-              <Paperclip className="w-4 h-4" />
-            </Button>
-            <div className="flex-1 relative">
-              <Textarea
-                placeholder="Type your message..."
-                className="min-h-[40px] max-h-32 resize-none pr-10"
-                rows={1}
-              />
-              <Button size="sm" variant="ghost" className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                <Smile className="w-4 h-4" />
+          {/* Message Input */}
+          <div className="p-4 border-t bg-card">
+            <div className="flex items-end gap-2">
+              <Button size="sm" variant="outline">
+                <Paperclip className="w-4 h-4" />
+              </Button>
+              <div className="flex-1 relative">
+                <Textarea
+                  placeholder="Type your message..."
+                  className="min-h-[40px] max-h-32 resize-none pr-10"
+                  rows={1}
+                />
+                <Button size="sm" variant="ghost" className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                  <Smile className="w-4 h-4" />
+                </Button>
+              </div>
+              <Button size="sm">
+                <Send className="w-4 h-4" />
               </Button>
             </div>
-            <Button size="sm">
-              <Send className="w-4 h-4" />
-            </Button>
           </div>
         </div>
       </div>

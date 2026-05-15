@@ -1,8 +1,17 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { ResponsiveTable } from "@/components/ui/responsive-table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Plus, Search, MoreHorizontal, Factory, Zap, AlertTriangle, CheckCircle2, Clock, Pause, Play, Settings, Activity, TrendingUp, BarChart3 } from "lucide-react"
 import Link from "next/link"
+import { useIsMobile } from "@/components/ui/use-mobile"
 
 // Mock production line data for rice processing
 const productionLines = [
@@ -96,124 +106,7 @@ function getStatusBadge(status: string) {
 }
 
 export default function ProductionLinesPage() {
-  const columns = [
-    {
-      key: 'name' as keyof typeof productionLines[0],
-      header: 'Production Line',
-      mobileLabel: 'Line'
-    },
-    {
-      key: 'status' as keyof typeof productionLines[0],
-      header: 'Status',
-      mobileLabel: 'Status'
-    },
-    {
-      key: 'capacity' as keyof typeof productionLines[0],
-      header: 'Capacity',
-      mobileLabel: 'Capacity',
-      mobileHidden: false
-    },
-    {
-      key: 'current_output' as keyof typeof productionLines[0],
-      header: 'Current Output',
-      mobileLabel: 'Output',
-      mobileHidden: false
-    },
-    {
-      key: 'efficiency' as keyof typeof productionLines[0],
-      header: 'Efficiency',
-      mobileLabel: 'Efficiency'
-    },
-    {
-      key: 'operator' as keyof typeof productionLines[0],
-      header: 'Operator',
-      mobileLabel: 'Operator',
-      mobileHidden: true // Hide on mobile to save space
-    },
-    {
-      key: 'next_maintenance' as keyof typeof productionLines[0],
-      header: 'Next Maintenance',
-      mobileLabel: 'Maintenance',
-      mobileHidden: true // Hide on mobile to save space
-    },
-    {
-      key: 'actions' as keyof typeof productionLines[0],
-      header: 'Actions',
-      mobileLabel: 'Actions'
-    }
-  ]
-
-  const renderCell = (column: any, value: any, item: any) => {
-    switch (column.key) {
-      case 'name':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-              <Factory className="w-4 h-4 text-primary" />
-            </div>
-            <div>
-              <div className="font-medium">{value}</div>
-              <div className="text-sm text-muted-foreground">{item.type}</div>
-            </div>
-          </div>
-        )
-      case 'status':
-        return getStatusBadge(value)
-      case 'efficiency':
-        return (
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {value > 90 ? (
-                <TrendingUp className="w-4 h-4 text-green-600" />
-              ) : value > 70 ? (
-                <BarChart3 className="w-4 h-4 text-yellow-600" />
-              ) : (
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-              )}
-              <span className={value > 90 ? "text-green-600" : value > 70 ? "text-yellow-600" : "text-red-600"}>
-                {value}%
-              </span>
-            </div>
-          </div>
-        )
-      case 'actions':
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Configure
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Activity className="mr-2 h-4 w-4" />
-                View Details
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                {item.status === "running" ? (
-                  <>
-                    <Pause className="mr-2 h-4 w-4" />
-                    Stop Line
-                  </>
-                ) : (
-                  <>
-                    <Play className="mr-2 h-4 w-4" />
-                    Start Line
-                  </>
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      default:
-        return String(value || '-')
-    }
-  }
+  const isMobile = useIsMobile()
 
   const mobileCardRender = (item: any, index: number) => (
     <Card key={index} className="p-4">
@@ -383,12 +276,99 @@ export default function ProductionLinesPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <ResponsiveTable
-            data={productionLines}
-            columns={columns}
-            renderCell={renderCell}
-            mobileCardRender={mobileCardRender}
-          />
+          {isMobile ? (
+            <div className="space-y-4">
+              {productionLines.map((item, index) => mobileCardRender(item, index))}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Production Line</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Capacity</TableHead>
+                  <TableHead>Current Output</TableHead>
+                  <TableHead>Efficiency</TableHead>
+                  <TableHead>Operator</TableHead>
+                  <TableHead>Next Maintenance</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {productionLines.map((line) => (
+                  <TableRow key={line.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                          <Factory className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <div className="font-medium">{line.name}</div>
+                          <div className="text-sm text-muted-foreground">{line.type}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(line.status)}
+                    </TableCell>
+                    <TableCell>{line.capacity}</TableCell>
+                    <TableCell>{line.current_output}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {line.efficiency > 90 ? (
+                            <TrendingUp className="w-4 h-4 text-green-600" />
+                          ) : line.efficiency > 70 ? (
+                            <BarChart3 className="w-4 h-4 text-yellow-600" />
+                          ) : (
+                            <AlertTriangle className="w-4 h-4 text-red-600" />
+                          )}
+                          <span className={line.efficiency > 90 ? "text-green-600" : line.efficiency > 70 ? "text-yellow-600" : "text-red-600"}>
+                            {line.efficiency}%
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{line.operator}</TableCell>
+                    <TableCell>{line.next_maintenance}</TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Settings className="mr-2 h-4 w-4" />
+                            Configure
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Activity className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            {line.status === "running" ? (
+                              <>
+                                <Pause className="mr-2 h-4 w-4" />
+                                Stop Line
+                              </>
+                            ) : (
+                              <>
+                                <Play className="mr-2 h-4 w-4" />
+                                Start Line
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
