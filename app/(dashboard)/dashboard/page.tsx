@@ -202,25 +202,25 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Welcome Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="page-header flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="page-title text-xl md:text-2xl font-bold tracking-tight">
             Welcome back, {firstName}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             {"Here's what's happening at Tamanaa Rice Processing today."}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
+        <div className="nav-buttons flex flex-col gap-2 md:flex-row md:gap-2">
+          <Button variant="outline" asChild className="mobile-button w-full md:w-auto">
             <Link href="/production/quality">
               <Plus className="w-4 h-4 mr-2" />
               Quality Check
             </Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="mobile-button w-full md:w-auto">
             <Link href="/production/lines">
               <Zap className="w-4 h-4 mr-2" />
               Production Status
@@ -230,9 +230,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="stats-grid grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className="hover:shadow-md transition-shadow">
+          <Card key={stat.title} className="stats-card hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
@@ -241,9 +241,9 @@ export default async function DashboardPage() {
                 <stat.icon className="w-4 h-4" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="mobile-p-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold">{stat.value}</span>
+                <span className="text-xl md:text-2xl font-bold">{stat.value}</span>
                 <span
                   className={`flex items-center text-xs font-medium ${
                     stat.trend === "up" ? "text-success" : "text-destructive"
