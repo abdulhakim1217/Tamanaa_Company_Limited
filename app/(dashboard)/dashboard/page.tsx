@@ -1,8 +1,12 @@
+'use client'
+
 import { getDashboardStats, getTasks } from "@/lib/database"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { MobileGrid, MobileHeader, MobileButton } from "@/components/ui/mobile-nav"
+import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Factory,
   Wheat,
@@ -154,8 +158,9 @@ function getModuleColor(module: string) {
   }
 }
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
   const firstName = "User"
+  const isMobile = useIsMobile()
 
   // Use mock data in standalone mode
   const dashboardStats = {
@@ -204,35 +209,31 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Welcome Section */}
-      <div className="page-header flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="page-title text-xl md:text-2xl font-bold tracking-tight">
-            Welcome back, {firstName}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground">
-            {"Here's what's happening at Tamanaa Rice Processing today."}
-          </p>
-        </div>
-        <div className="nav-buttons flex flex-col gap-2 md:flex-row md:gap-2">
-          <Button variant="outline" asChild className="mobile-button w-full md:w-auto">
-            <Link href="/production/quality">
-              <Plus className="w-4 h-4 mr-2" />
-              Quality Check
-            </Link>
-          </Button>
-          <Button asChild className="mobile-button w-full md:w-auto">
-            <Link href="/production/lines">
-              <Zap className="w-4 h-4 mr-2" />
-              Production Status
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <MobileHeader
+        title={`Welcome back, ${firstName}`}
+        subtitle="Here's what's happening at Tamanaa Rice Processing today."
+        actions={
+          <div className={`flex gap-2 ${isMobile ? 'flex-col w-full' : 'flex-row'}`}>
+            <MobileButton variant="outline" asChild>
+              <Link href="/production/quality">
+                <Plus className="w-4 h-4 mr-2" />
+                Quality Check
+              </Link>
+            </MobileButton>
+            <MobileButton asChild>
+              <Link href="/production/lines">
+                <Zap className="w-4 h-4 mr-2" />
+                Production Status
+              </Link>
+            </MobileButton>
+          </div>
+        }
+      />
 
       {/* Stats Grid */}
-      <div className="stats-grid grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <MobileGrid cols={4} className="gap-3 md:gap-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className="stats-card hover:shadow-md transition-shadow">
+          <Card key={stat.title} className="hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
@@ -241,9 +242,11 @@ export default async function DashboardPage() {
                 <stat.icon className="w-4 h-4" />
               </div>
             </CardHeader>
-            <CardContent className="mobile-p-4">
+            <CardContent className="p-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-xl md:text-2xl font-bold">{stat.value}</span>
+                <span className={`font-bold ${isMobile ? 'text-lg' : 'text-xl md:text-2xl'}`}>
+                  {stat.value}
+                </span>
                 <span
                   className={`flex items-center text-xs font-medium ${
                     stat.trend === "up" ? "text-success" : "text-destructive"
@@ -267,12 +270,12 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
+      </MobileGrid>
 
       {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
         {/* Tasks */}
-        <Card className="lg:col-span-2">
+        <Card className={isMobile ? '' : 'lg:col-span-2'}>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle>Production Tasks</CardTitle>
@@ -287,32 +290,38 @@ export default async function DashboardPage() {
               {userTasks.slice(0, 4).map((task: any) => (
                 <div
                   key={task.id}
-                  className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                  className={`flex gap-4 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors ${
+                    isMobile ? 'flex-col' : 'items-center'
+                  }`}
                 >
-                  <div className="flex-shrink-0">
-                    {task.status === "in_progress" ? (
-                      <Clock className="w-5 h-5 text-amber-600" />
-                    ) : task.status === "completed" ? (
-                      <CheckCircle2 className="w-5 h-5 text-success" />
-                    ) : (
-                      <AlertCircle className="w-5 h-5 text-muted-foreground" />
-                    )}
+                  <div className={`flex items-center gap-3 ${isMobile ? 'w-full' : 'flex-1 min-w-0'}`}>
+                    <div className="flex-shrink-0">
+                      {task.status === "in_progress" ? (
+                        <Clock className="w-5 h-5 text-amber-600" />
+                      ) : task.status === "completed" ? (
+                        <CheckCircle2 className="w-5 h-5 text-success" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium">{task.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Assigned to {task.assignee}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{task.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Assigned to {task.assignee}
-                    </p>
+                  <div className={`flex items-center gap-2 ${isMobile ? 'justify-between' : 'flex-shrink-0'}`}>
+                    <Badge
+                      variant="outline"
+                      className={getPriorityColor(task.priority)}
+                    >
+                      {task.priority}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      {task.dueDate}
+                    </span>
                   </div>
-                  <Badge
-                    variant="outline"
-                    className={getPriorityColor(task.priority)}
-                  >
-                    {task.priority}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">
-                    {task.dueDate}
-                  </span>
                 </div>
               ))}
             </div>
@@ -363,24 +372,26 @@ export default async function DashboardPage() {
         <CardContent>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center gap-4">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="text-xs bg-gradient-to-br from-amber-500 to-orange-600 text-white">
-                    {activity.user.split(" ").map((n) => n[0]).join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm">
-                    <span className="font-medium">{activity.user}</span>{" "}
-                    <span className="text-muted-foreground">{activity.action}</span>{" "}
-                    <span className="font-medium">{activity.target}</span>
-                  </p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <Badge variant="secondary" className={getModuleColor(activity.module)}>
-                      {activity.module}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">{activity.time}</span>
+              <div key={activity.id} className={`flex gap-4 ${isMobile ? 'flex-col' : 'items-center'}`}>
+                <div className={`flex items-center gap-3 ${isMobile ? 'w-full' : 'flex-1 min-w-0'}`}>
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback className="text-xs bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+                      {activity.user.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm">
+                      <span className="font-medium">{activity.user}</span>{" "}
+                      <span className="text-muted-foreground">{activity.action}</span>{" "}
+                      <span className="font-medium">{activity.target}</span>
+                    </p>
                   </div>
+                </div>
+                <div className={`flex items-center gap-2 ${isMobile ? 'justify-between' : 'flex-shrink-0'}`}>
+                  <Badge variant="secondary" className={getModuleColor(activity.module)}>
+                    {activity.module}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">{activity.time}</span>
                 </div>
               </div>
             ))}

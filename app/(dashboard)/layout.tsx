@@ -1,8 +1,13 @@
+'use client'
+
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { MobileLayout } from "@/components/mobile-layout"
 import { Separator } from "@/components/ui/separator"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { useEffect, useState } from "react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,19 +17,38 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export default async function DashboardLayout({
-  children,
-}: {
+interface DashboardLayoutProps {
   children: React.ReactNode
-}) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+}
 
-  // In standalone mode, always allow access (no authentication required)
-  // if (!user) {
-  //   redirect("/auth/login")
-  // }
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [user, setUser] = useState(null)
+  const [mounted, setMounted] = useState(false)
+  const isMobile = useIsMobile()
 
+  useEffect(() => {
+    setMounted(true)
+    // Mock user for standalone mode
+    setUser({
+      email: "user@tamanaa.com",
+      user_metadata: {
+        first_name: "Rice",
+        last_name: "Manager"
+      }
+    })
+  }, [])
+
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return null
+  }
+
+  // Use mobile layout for mobile devices
+  if (isMobile) {
+    return <MobileLayout>{children}</MobileLayout>
+  }
+
+  // Use desktop layout for larger screens
   return (
     <SidebarProvider>
       <AppSidebar user={user} />
