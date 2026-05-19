@@ -19,11 +19,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [user, setUser] = useState(null)
-  const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile()
 
   useEffect(() => {
-    setMounted(true)
     // Mock user for standalone mode
     setUser({
       email: "user@tamanaa.com",
@@ -34,12 +32,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     })
   }, [])
 
-  // Prevent hydration mismatch
-  if (!mounted) {
+  // Show loading spinner while determining mobile state
+  if (isMobile === undefined) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="flex items-center justify-center h-64">
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-sm text-muted-foreground">Loading Tamanaa Rice Processing...</p>
         </div>
       </div>
     )

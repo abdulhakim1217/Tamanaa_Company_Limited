@@ -206,6 +206,15 @@ export default function DashboardPage() {
     },
   ]
 
+  // Show loading while mobile state is being determined
+  if (isMobile === undefined) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Welcome Section */}
