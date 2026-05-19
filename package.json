@@ -1,15 +1,16 @@
 {
   "name": "tamanaa-rice-processing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "dev:clean": "node scripts/dev-clean.js",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "setup": "node scripts/setup.js",
-    "clean": "node scripts/clean.js"
+    "clean": "node scripts/clean.js",
+    "vercel-build": "next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -73,5 +74,9 @@
     "tailwindcss": "^4.2.0",
     "tw-animate-css": "1.3.3",
     "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

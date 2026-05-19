@@ -7,7 +7,10 @@ const nextConfig = {
     unoptimized: true,
   },
   reactStrictMode: false,
-  allowedDevOrigins: ['172.20.10.4'],
+  // Remove allowedDevOrigins for production
+  ...(process.env.NODE_ENV === 'development' && {
+    allowedDevOrigins: ['172.20.10.4'],
+  }),
 }
 
 export default nextConfig

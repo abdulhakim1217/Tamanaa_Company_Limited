@@ -1,7 +1,5 @@
 'use client'
 
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { MobileLayout } from "@/components/mobile-layout"
@@ -13,8 +11,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
 interface DashboardLayoutProps {
@@ -40,7 +36,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // Prevent hydration mismatch
   if (!mounted) {
-    return null
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    )
   }
 
   // Use mobile layout for mobile devices
